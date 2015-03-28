@@ -7,9 +7,9 @@ A php extension which can dump memory data to a binary file and load the file in
 Table of Contents
 =================
 
-* [install](#install)
-* [BloomFilter](##BloomFilter)
-* [FixedArray](##FixedArray)
+* [Install](#install)
+* [BloomFilter](#BloomFilter)
+* [FixedArray](#FixedArray)
 * [Changelog](#Changelog)
 
 # Install
@@ -39,6 +39,8 @@ fcache.unused_threshold=86400
 ~~~
 
 # API
+
+<a name="BloomFilter"></a>
 
 ## BloomFilter
 
@@ -185,6 +187,8 @@ MAJFLT MINFLT
 
 上述的第二种配置误判率更低，但是生成的数据文件也更大（`95MB`），是第一个数据文件的两倍大小（`47MB`）。
 
+<a name="FixedArray"></a>
+
 ## FixedArray
 
 ### Introduction
@@ -281,6 +285,8 @@ cd fcache/gtest
 make clean
 make
 ~~~
+
+<a name="Changelog"></a>
 
 # Changelog
 
