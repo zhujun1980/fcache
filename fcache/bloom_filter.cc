@@ -51,7 +51,7 @@ bool BloomFilter::IsPresent(const std::string& kb) const {
  * 
  * @param filepath
  */
-bool BloomFilter::Save(std::string& filepath) {
+bool BloomFilter::Save(const std::string& filepath) {
     FILE* idx = OpenFile(filepath.c_str(), "w+");
     if(idx == NULL) {
         DoLog(Logger::ERROR, "Open BloomFilter file failed %d (%s:%d)", errno, __FILE__, __LINE__);

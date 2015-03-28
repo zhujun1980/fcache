@@ -5,32 +5,23 @@
  * Created on 2014年8月5日, 上午10:18
  */
 
-#ifndef FCACHE_H
-#define	FCACHE_H
+#ifndef FCACHE_PHP_CLASS_H
+#define	FCACHE_PHP_CLASS_H
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-#define FCACHE_BLOOM_FILTER_N "FCacheBloomFilter"
-    
-#define BLOOM_FILTER_STAT_VER   "version"
-#define BLOOM_FILTER_STAT_HC    "hash_cnt"
-#define BLOOM_FILTER_STAT_BITS  "bit_size"
-#define BLOOM_FILTER_STAT_BYTES "byte_size"
+FCACHE_STARTUP_D(core);
 
-extern zend_class_entry *fcache_bloom_filter_cls;
+FCACHE_SHUTDOWN_D(core);
 
-PHP_MINIT_FUNCTION(fcache_core);
+FCACHE_DEACTIVATE_D(core);
 
-PHP_MSHUTDOWN_FUNCTION(fcache_core);
-
-PHP_RSHUTDOWN_FUNCTION(fcache_core);
-
-PHP_MINFO_FUNCTION(fcache_core);
+FCACHE_INFO_D(core);
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* FCACHE_H */
+#endif	/* FCACHE_PHP_CLASS_H */

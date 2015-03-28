@@ -45,7 +45,7 @@ public:
     void Add(const std::string& kb);
     bool IsPresent(const std::string& kb) const;
 
-    bool Save(std::string& filepath);
+    bool Save(const std::string& filepath);
     
     Stats Stat() {
         Stats s;

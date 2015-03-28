@@ -90,12 +90,12 @@ static inline void fcache_globals_dtor(zend_fcache_globals *fcache_globals_p TSR
 PHP_MINIT_FUNCTION(fcache) {
     fcache_globals_ctor(&fcache_globals TSRMLS_CC);
     REGISTER_INI_ENTRIES();
-    ZEND_MODULE_STARTUP_N(fcache_core)(INIT_FUNC_ARGS_PASSTHRU);
+    FCACHE_STARTUP(core);
     return SUCCESS;
 }
 
 PHP_MSHUTDOWN_FUNCTION(fcache) {
-    ZEND_MODULE_SHUTDOWN_N(fcache_core)(SHUTDOWN_FUNC_ARGS_PASSTHRU);
+    FCACHE_SHUTDOWN(core);
     UNREGISTER_INI_ENTRIES();
     fcache_globals_dtor(&fcache_globals TSRMLS_CC);
     return SUCCESS;
@@ -106,7 +106,7 @@ PHP_RINIT_FUNCTION(fcache) {
 }
 
 PHP_RSHUTDOWN_FUNCTION(fcache) {
-    ZEND_MODULE_DEACTIVATE_N(fcache_core)(SHUTDOWN_FUNC_ARGS_PASSTHRU);
+    FCACHE_DEACTIVATE(core);
     return SUCCESS;
 }
 
@@ -115,7 +115,6 @@ PHP_MINFO_FUNCTION(fcache) {
     php_info_print_table_header(2, "fcache support", "enabled");
     php_info_print_table_row(2, "version", FCACHE_VERSION);
     php_info_print_table_end();
-
-    zm_info_fcache_core(zend_module);
+    FCACHE_INFO(core);
     DISPLAY_INI_ENTRIES();
 }

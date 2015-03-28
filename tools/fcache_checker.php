@@ -1,6 +1,6 @@
 <?php
-//php fcache_checker.php m 1 < /Users/zhujun/source/BloomFilter/data/m.txt
-//php fcache_checker.php small 0 < /Users/zhujun/source/BloomFilter/data/small2.txt
+//php fcache_checker.php m 1 < /Users/zhujun/source/sina/BloomFilter/data/m.txt
+//php fcache_checker.php small 0 < /Users/zhujun/source/sina/BloomFilter/data/small2.txt
 
 ini_set('error_reporting', E_ALL & ~E_NOTICE);
 ini_set('display_errors', 1);

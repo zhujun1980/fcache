@@ -1,4 +1,4 @@
-FCache Extensions (version 1.0.2)
+FCache Extensions (version 1.0.3)
 =================================
 
 # Install
@@ -132,7 +132,7 @@ $statinfo = FCacheBloomFilter::stat($idxFile);
 
 使用的例子可见 fcache.php 和 fcache_writer.php
 
-# 性能测试
+### BloomFilter 性能测试
 
 fcache 使用 `mmap` 把数据文件映射到进程的虚拟地址空间（以 `MAP_SHARED` 方式），通常 mmap 不会把整个文件拷贝到内存中，而是采用缓式加载机制，即只有用到的 __*内存页*__ 才会被加载到物理内存中。当进行 BloomFilter 查找时，如果相关的内存页没有加载到内存，就会产生一个 __*缺页中断(pagefault)*__，这时发生的 pagefault 错误称为 __*大错误(Major)*__ ：即物理内存中没有这页，需要从存储上加载。Major 的成本比较高，因为它产生磁盘IO；如果一个内存页已经加载到了内存但是在当前进程的内存管理单元中没有标记，这时发生的 pagefault 错误称为 __*小错误(Minor)*__ 这种情况一般多出现在使用共享内存的情况下，Minor 成本就较低。下面是经过测试得出的查询延迟：
 
@@ -151,13 +151,13 @@ MAJFLT MINFLT
     32   1034
 ~~~
 
-# BloomFilter 错误率测试
+### BloomFilter 错误率测试
 
-##测试方法
+####测试方法
 
 生成两个包含随机数的集合 A 和 B，A、B 的元素数量均为 24854815，且 A 和 B 交集为空。生成 A 和 B 对应的数据文件：A.bf 和 B.bf，交叉检查集合中每个元素是否出现在对方集合中：即在 A.bf 中查找 B 的每个元素，在 B.bf 中查找 A 的每个元素
 
-##测试结果
+####测试结果
 当使用`hashCnt = 8` 和 `bitsPerElement = 16` 生成数据时，得到如下的结果：
 
 * 在 A.bf 中存在的 B 中的元素数量是： 14493 个
@@ -174,6 +174,89 @@ MAJFLT MINFLT
 
 上述的第二种配置误判率更低，但是生成的数据文件也更大（`95MB`），是第一个数据文件的两倍大小（`47MB`）。
 
+## FixedArray
+
+### Introduction
+
+FixedArray 能把PHP数组保存到文件，然后加载到共享内存，提供只读的访问，加载的过程不需要反序列化，没有数据拷贝。目前不支持嵌套的数组，只能使用string/long/double这种简单类型作为值，可用作配置文件的存储
+
+### Class
+
+~~~
+class FixedArray implements Iterator, ArrayAccess, Countable {
+
+    public static FixedArray fromArray (array $array);
+    public static FixedArray fromFile (string $filepath);
+
+    private __construct();
+
+    public bool toFile($filepath);
+    public array toArray( void );
+
+    public int count ( void );
+
+    public mixed current ( void );
+    public string key ( void );
+    public void next ( void );
+    public void rewind ( void );
+    public boolean valid ( void );
+
+    public boolean offsetExists ( mixed $offset );
+    public mixed offsetGet ( mixed $offset );
+    public void offsetSet ( mixed $offset , mixed $value ); //not implement
+    public void offsetUnset ( mixed $offset );//not implement
+
+}
+
+~~~
+
+### 用法
+
+#### 把数组保存到文件
+~~~
+//目前数组不支持嵌套，只能是 long/double/string 类型
+$data = array (
+    "abcdefghi",
+    "1",
+    78,
+    "abc" => "cba",
+    1,
+    4,
+    5,
+    NULL,
+    "中文",
+);
+
+$fa = FixedArray::fromArray($data);
+$ret = $fa->toFile($filepath);
+
+~~~
+
+#### 加载文件到共享内存
+
+~~~
+
+//FixedArray 文件以 pa 为后缀，加载的路径和 BloomFilter 一样，需要在 ini 中配置目录
+$fa = FixedArray::fromFile("filename", "setting");
+
+echo $fa->offsetGet("abc"); //输出: cba
+echo $fa[1]; //输出:  1
+
+echo "for loop:\n";
+for(; $fa->valid(); $fa->next()) {
+	echo  "Key:\t" . $fa->key() . " = " . $fa->current() . "\n";
+}
+
+echo "foreach loop2:\n";
+foreach($fa as $k => $v) {
+	echo  "Key:\t" . $k . " = " . $v . "\n";
+}
+
+//不支持写操作
+$fa[5] = 1; //将报错
+
+~~~
+
 # 数据更新
 
 * 当数据内容被更新，扩展会把数据重新映射到内存中。
@@ -189,6 +272,12 @@ make
 ~~~
 
 # Changelog
+
+## v1.0.3
+* 修改代码组织结构，便于增加数据结构
+* 增加 php module 宏定义，使调用更加清晰
+* php测试脚本移入 tools 目录
+* 增加 FixedArray
 
 ## v1.0.2
 * 修复bug

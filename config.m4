@@ -47,11 +47,15 @@ if test "$PHP_FCACHE" != "no"; then
   PHP_ADD_LIBRARY(stdc++, 1, FCACHE_SHARED_LIBADD)
   PHP_NEW_EXTENSION(fcache, fcache.cc                       \
                             fcache_php_class.cc             \
+                            fcache_set.cc                   \
+                            fcache_dict.cc                  \
+                            fixed_array.cc                  \
+                            deep_copy.cc                    \
                             fcache/murmur_hash3.cc          \
                             fcache/bit_set.cc               \
                             fcache/file_utils.cc            \
                             fcache/rand_utils.cc            \
                             fcache/time_utils.cc            \
                             fcache/shmm_posix.cc            \
-                            fcache/bloom_filter.cc, $ext_shared)
+                            fcache/bloom_filter.cc,         $ext_shared)
 fi
