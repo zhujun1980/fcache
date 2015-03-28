@@ -8,8 +8,8 @@ Table of Contents
 =================
 
 * [install](#install)
-* [BloomFilter](#BloomFilter)
-* [FixedArray](#FixedArray)
+* [BloomFilter](##BloomFilter)
+* [FixedArray](##FixedArray)
 * [Changelog](#Changelog)
 
 # Install
